@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#PBS -l nodes=1:ppn=1
+#PBS -l walltime=00:05:00
+
+#parse config.json for input parameters
+out1=$(jq -r .dwi config.json)
+out2=$(jq -r .bvals config.json)
+out3=$(jq -r .bvecs config.json)
+./snr_in_cc.py "$out1" "$out2" "$out3"
