@@ -33,11 +33,23 @@ example for further explanations).
 
 import shutil
 from dipy.workflows.workflow import Workflow
-from dipy.workflows.flow_runner import run_flow
+
 class SNRinCCFlow(Workflow):
 
-    def run(self, input_files, out_dir = '', outfile='product.json')
+    def run(self, input_files, out_dir = '', out_file='product.json')
         #from __future__ import division, print_function
+        """
+            Parameters
+            ----------
+            input_files : string
+            Path to the input files. This path may contain wildcards to
+            process multiple inputs at once.
+            out_dir : string, optional
+            Where the resulting file will be saved. (default '')
+            out_file : string, optional
+            Name of the result file to be saved. (default 'append.txt')
+            """
+        
         import nibabel as nib
         import numpy as np
         import matplotlib.pyplot as plt
@@ -155,12 +167,14 @@ class SNRinCCFlow(Workflow):
         a  xis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
         axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
 
+        SNR_output = []
         for direction in [0, axis_X, axis_Y, axis_Z]:
             SNR = mean_signal[direction]/noise_std
             if direction == 0 :
                 print("SNR for the b=0 image is :", SNR)
             else :
                 print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
+            SNR_output.append(SNR)
         #write output data to product.json
 
         """SNR for the b=0 image is : ''42.0695455758''"""
@@ -194,6 +208,20 @@ class SNRinCCFlow(Workflow):
         MRI. NeuroImage, 73, 239, 2013.
        
         """
+        io_it = self.get_io_iterator()
+
+        for in_file, out_file in io_it:
+            
+            shutil.copy(in_file, out_file)
+            
+            with open(out_file, 'a') as myfile:
+                
+                myfile.write(SNR_output)
+
+
+
+
+from dipy.workflows.flow_runner import run_flow
 
 if __name__ == "__main__":
     run_flow(SNRinCCFlow())
