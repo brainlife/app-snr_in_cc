@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """
 
 =============================================
@@ -32,23 +30,35 @@ example for further explanations).
 """
 
 import shutil
+
+"""
+``shutil`` Will be used for sample file manipulation.
+"""
+
 from dipy.workflows.workflow import Workflow
+
+"""
+``Workflow`` is the base class that will be extended to create our workflow.
+"""
+
 
 class SNRinCCFlow(Workflow):
 
-    def run(self, input_files, out_dir = '', out_file='product.json')
-        #from __future__ import division, print_function
+    def run(self, input_files, text_to_append='', out_dir = '',
+            out_file='product.json'):
         """
-            Parameters
-            ----------
-            input_files : string
+        Parameters
+        ----------
+        input_files : string
             Path to the input files. This path may contain wildcards to
             process multiple inputs at once.
-            out_dir : string, optional
+        text_to_append : string, optional
+            Text that will be appended to the file. (default 'dipy')
+        out_dir : string, optional
             Where the resulting file will be saved. (default '')
-            out_file : string, optional
+        out_file : string, optional
             Name of the result file to be saved. (default 'append.txt')
-            """
+        """
         
         import nibabel as nib
         import numpy as np
@@ -66,12 +76,8 @@ class SNRinCCFlow(Workflow):
 
         import sys
 
-        ## load data
-        #fetch_stanford_hardi()
-        #img, gtab = read_stanford_hardi()
-
-        img = nib.load(input_files[1])
-        bvals, bvecs = read_bvals_bvecs(input_files[2], input_files[3])
+        img = nib.load('/Users/davidhunt/Documents/5bb3f635cb555c003fa214c0/dwi.nii.gz')
+        bvals, bvecs = read_bvals_bvecs('/Users/davidhunt/Documents/5bb3f635cb555c003fa214c0/dwi.bvals', '/Users/davidhunt/Documents/5bb3f635cb555c003fa214c0/dwi.bvecs')
         gtab = gradient_table(bvals, bvecs)
 
         data = img.get_data()
@@ -85,15 +91,15 @@ class SNRinCCFlow(Workflow):
         tensorfit = tenmodel.fit(data, mask=mask)
 
         """Next, we set our red-green-blue thresholds to (0.6, 1) in the x axis
-            and (0, 0.1) in the y and z axes respectively.
-            These values work well in practice to isolate the very RED voxels of the cfa map.
+        and (0, 0.1) in the y and z axes respectively.
+        These values work well in practice to isolate the very RED voxels of the cfa map.
 
-            Then, as assurance, we want just RED voxels in the CC (there could be
-            noisy red voxels around the brain mask and we don't want those). Unless the brain
-            acquisition was badly aligned, the CC is always close to the mid-sagittal slice.
+        Then, as assurance, we want just RED voxels in the CC (there could be
+        noisy red voxels around the brain mask and we don't want those). Unless the brain
+        acquisition was badly aligned, the CC is always close to the mid-sagittal slice.
 
-            The following lines perform these two operations and then saves the computed mask.
-            """
+        The following lines perform these two operations and then saves the computed mask.
+        """
 
         print('Computing worst-case/best-case SNR using the corpus callosum...')
 
@@ -114,9 +120,9 @@ class SNRinCCFlow(Workflow):
         mask_cc_part, cfa = segment_from_cfa(tensorfit, CC_box, threshold,
                                              return_cfa=True)
 
-            cfa_img = nib.Nifti1Image((cfa*255).astype(np.uint8), affine)
-            mask_cc_part_img = nib.Nifti1Image(mask_cc_part.astype(np.uint8), affine)
-            nib.save(mask_cc_part_img, 'cc.nii.gz')
+        cfa_img = nib.Nifti1Image((cfa*255).astype(np.uint8), affine)
+        mask_cc_part_img = nib.Nifti1Image(mask_cc_part.astype(np.uint8), affine)
+        nib.save(mask_cc_part_img, 'cc.nii.gz')
 
         #region = 40
         # fig = plt.figure('Corpus callosum segmentation')
@@ -140,11 +146,11 @@ class SNRinCCFlow(Workflow):
         mean_signal = np.mean(data[mask_cc_part], axis=0)
 
         """Now, we need a good background estimation. We will re-use the brain mask
-            computed before and invert it to catch the outside of the brain. This could
-            also be determined manually with a ROI in the background.
-            [Warning: Certain MR manufacturers mask out the outside of the brain with 0's.
-            One thus has to be careful how the noise ROI is defined].
-            """
+        computed before and invert it to catch the outside of the brain. This could
+        also be determined manually with a ROI in the background.
+        [Warning: Certain MR manufacturers mask out the outside of the brain with 0's.
+        One thus has to be careful how the noise ROI is defined].
+        """
 
         mask_noise = binary_dilation(mask, iterations=10)
         mask_noise[..., :mask_noise.shape[-1]//2] = 1
@@ -164,7 +170,7 @@ class SNRinCCFlow(Workflow):
         idx = np.sum(gtab.bvecs, axis=-1) == 0
         gtab.bvecs[idx] = np.inf
         axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
-        a  xis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
+        axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
         axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
 
         SNR_output = []
@@ -176,7 +182,11 @@ class SNRinCCFlow(Workflow):
                 print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
             SNR_output.append(SNR)
         #write output data to product.json
-
+        print SNR_output
+        print SNR_output[0] + SNR_output[1] + SNR_output[2] + SNR_output[3]
+        SNR_output = str(SNR_output[0]) + ' ' + str(SNR_output[1]) + ' ' + str(SNR_output[2]) + ' ' + str(SNR_output[3])
+        print SNR_output
+        text_to_append = SNR_output
         """SNR for the b=0 image is : ''42.0695455758''"""
         """SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""
         """SNR for direction 57  [-0.05039  0.99871  0.0054406] is : ''23.9329492871''"""
@@ -216,12 +226,13 @@ class SNRinCCFlow(Workflow):
             
             with open(out_file, 'a') as myfile:
                 
-                myfile.write(SNR_output)
+                myfile.write(text_to_append)
 
 
-
+# from dipy.workflows.my_workflow import SNRinCCFlow
 
 from dipy.workflows.flow_runner import run_flow
+
 
 if __name__ == "__main__":
     run_flow(SNRinCCFlow())
