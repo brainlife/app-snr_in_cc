@@ -151,24 +151,21 @@ gtab.bvecs[idx] = np.inf
 
 SNR_output = []
 directions = []
-b0 = True
-for direction in range(0, len(gtab.bvecs)):
+for direction in [0, axis_X, axis_Y, axis_Z]:
     SNR = mean_signal[direction]/noise_std
-    if gtab.bvecs[direction][0] == np.inf and b0 == True:
+    if direction == 0 :
         print("SNR for the b=0 image is :", SNR)
-        SNR_output.append(str(direction) + ', ' + str(SNR))
-        directions.append('b0')
-        b0 = False
-    elif gtab.bvecs[direction][0] != np.inf:
+    else :
         print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
-        SNR_output.append(str(direction) + ', ' + str(SNR))
-        directions.append(gtab.bvecs[direction])
+    SNR_output.append(SNR)
+    directions.append(direction)
+    directions.append(gtab.bvecs[direction])
 
 data = []
 
 data.append({
-            "data": SNR_output,
-            "directions": directions
+            'data': SNR_output,
+            'directions': directions
             })
 
 out_file = open("results.txt", "w")
