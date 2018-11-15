@@ -169,7 +169,7 @@ data.append({
             })
 
 out_file = open("results.txt", "w")
-out_file.write(data)
+out_file.write(str(data))
 out_file.close()
 
 """SNR for the b=0 image is : ''42.0695455758''"""
