@@ -149,12 +149,28 @@ axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
 axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
 axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
 
+SNR_output = []
+directions = []
 for direction in [0, axis_X, axis_Y, axis_Z]:
     SNR = mean_signal[direction]/noise_std
     if direction == 0 :
         print("SNR for the b=0 image is :", SNR)
     else :
         print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
+    SNR_output.append(SNR)
+    directions.append(direction)
+    directions.append(gtab.bvecs[direction])
+
+data = []
+
+data.append({
+            'data': SNR_output,
+            'directions': directions
+            })
+
+out_file = open("results.txt", "w")
+out_file.write(data)
+out_file.close()
 
 """SNR for the b=0 image is : ''42.0695455758''"""
 """SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""
