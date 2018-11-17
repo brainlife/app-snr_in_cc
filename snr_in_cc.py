@@ -47,6 +47,7 @@ from dipy.segment.mask import segment_from_cfa
 from dipy.segment.mask import bounding_box
 
 import sys
+import json
 
 ## load data
 #fetch_stanford_hardi()
@@ -162,18 +163,17 @@ for direction in range(0, len(gtab.bvecs)):
     elif gtab.bvecs[direction][0] != np.inf:
         print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
         SNR_output.append(str(direction) + ', ' + str(SNR))
-        directions.append(gtab.bvecs[direction])
+        directions.append(str(direction) + ', ' + str(gtab.bvecs[direction]))
 
 data = []
 
 data.append({
-            "data": SNR_output,
+            "SNR data": SNR_output,
             "directions": directions
             })
 
-out_file = open("results.txt", "w")
-out_file.write(str(data))
-out_file.close()
+with open("product.json", "w") as out_file:
+    json.dump(data, out_file)
 
 """SNR for the b=0 image is : ''42.0695455758''"""
 """SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""
