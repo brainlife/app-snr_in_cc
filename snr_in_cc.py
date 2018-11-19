@@ -173,7 +173,7 @@ data.append({
             })
 
 with open("product.json", "w") as out_file:
-    json.dump(data, out_file)
+    json.dump(data[0], out_file)
 
 """SNR for the b=0 image is : ''42.0695455758''"""
 """SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""
