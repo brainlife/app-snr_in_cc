@@ -150,18 +150,21 @@ axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
 axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
 axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
 
-SNR_output = []
+#SNR_output = []
+SNR_outpu1 = []
 directions = []
 b0 = True
 for direction in (0, axis_X, axis_Y, axis_Z):
     SNR = mean_signal[direction]/noise_std
     if gtab.bvecs[direction][0] == np.inf:
         print("SNR for the b=0 image is :", SNR)
-        SNR_output.append(str(direction) + ', ' + str(SNR))
+        #SNR_output.append(str(direction) + ', ' + str(SNR))
+        SNR_output1.append(SNR)
         directions.append('b0')
     elif gtab.bvecs[direction][0] != np.inf:
         print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
-        SNR_output.append(str(direction) + ', ' + str(SNR))
+        #SNR_output.append(str(direction) + ', ' + str(SNR))
+        SNR_output1.append(SNR)
         directions.append(str(direction) + ', ' + str(gtab.bvecs[direction]))
 
 results = {"brainlife": []}
@@ -188,7 +191,7 @@ results['brainlife'].append({
 				"width": 1.5
 			}
 		},
-		"y": SNR_output,
+		"y": SNR_output1,
 		"x": [
 			"b0",
 			"X_Axis",
