@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 
@@ -150,63 +150,58 @@ axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
 axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
 axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
 
-#SNR_output = []
-SNR_output1 = []
+SNR_output = []
 directions = []
 b0 = True
 for direction in (0, axis_X, axis_Y, axis_Z):
     SNR = mean_signal[direction]/noise_std
     if gtab.bvecs[direction][0] == np.inf:
         print("SNR for the b=0 image is :", SNR)
-        #SNR_output.append(str(direction) + ', ' + str(SNR))
         SNR_output1.append(SNR)
         directions.append('b0')
     elif gtab.bvecs[direction][0] != np.inf:
         print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
-        #SNR_output.append(str(direction) + ', ' + str(SNR))
-        SNR_output1.append(SNR)
+        SNR_output.append(SNR)
         directions.append(str(direction) + ', ' + str(gtab.bvecs[direction]))
 
+results = {"brainlife": []}
 
-
-#data.append({
-#            "SNR data": SNR_output,
-#            "directions": directions
-#            })
+results['brainlife'].append({
+	"type": "plotly",
+	"layout": {
+		"title": "SNRs in b0 and X, Y, and Z directions"
+	},
+	"name": "SNRs in b0, X, Y, and Z directions",
+	"data": [
+	{
+		"opacity": 0.6,
+		"text": [
+			"direction " + str(gtab.bvecs[0]),
+			"direction " + str(gtab.bvecs[axis_X]),
+			"direction " + str(gtab.bvecs[axis_Y]),
+			"direction " + str(gtab.bvecs[axis_Z])
+		],
+		"marker": {
+			"color": "rgb(158,202,225)",
+			"line": {
+				"color": "rgb(8,48,107)",
+				"width": 1.5
+			}
+		},
+		"y": SNR_output1,
+		"x": [
+			"b0",
+			"X_Axis",
+			"Y_Axis",
+			"Z_Axis"
+		],
+		"type": "bar"
+	}
+	]
+})
 
 with open("product.json", "w") as out_file:
     json.dump(results, out_file)
-
-
-
-
-import plotly.plotly as py
-from plotly.graph_objs import *
-#py.sign_in('davhunt', 'tMq1Y2WOP6RtlR46vXmS')
-trace1 = {
-	"x": ["b0", "X_Axis", "Y_Axis", "Z_Axis"],
-	"y": SNR_output1,
-	"marker": {
-		"color": "rgb(158,202,225)",
-		"line": {
-			"color": "rgb(8,48,107)",
-			"width": 1.0
-		}
-	},
-	"opacity": 0.6,
-	"text": [
-		"direction " + str(gtab.bvecs[0]),
-		"direction " + str(gtab.bvecs[axis_X]),
-		"direction " + str(gtab.bvecs[axis_Y]),
-		"direction " + str(gtab.bvecs[axis_Z])
-	],
-	"type": "bar"
-}
-data = Data([trace1])
-layout = {"title": "SNRs"}
-fig = Figure(data=data, layout=layout)
-plot_url = py.plot(fig)
-
 
 """SNR for the b=0 image is : ''42.0695455758''"""
 """SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""

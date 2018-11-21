@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 
@@ -167,41 +167,6 @@ for direction in (0, axis_X, axis_Y, axis_Z):
         SNR_output1.append(SNR)
         directions.append(str(direction) + ', ' + str(gtab.bvecs[direction]))
 
-results = {"brainlife": []}
-
-results['brainlife'].append({
-	"type": "plotly",
-	"layout": {
-		"title": "SNRs in b0 and X, Y, and Z directions"
-	},
-	"name": "SNRs in b0, X, Y, and Z directions",
-	"data": [
-	{
-		"opacity": 0.6,
-		"text": [
-			"direction " + str(gtab.bvecs[0]),
-			"direction " + str(gtab.bvecs[axis_X]),
-			"direction " + str(gtab.bvecs[axis_Y]),
-			"direction " + str(gtab.bvecs[axis_Z])
-		],
-		"marker": {
-			"color": "rgb(158,202,225)",
-			"line": {
-				"color": "rgb(8,48,107)",
-				"width": 1.5
-			}
-		},
-		"y": SNR_output1,
-		"x": [
-			"b0",
-			"X_Axis",
-			"Y_Axis",
-			"Z_Axis"
-		],
-		"type": "bar"
-	}
-	]
-})
 
 
 #data.append({
@@ -211,6 +176,37 @@ results['brainlife'].append({
 
 with open("product.json", "w") as out_file:
     json.dump(results, out_file)
+
+
+
+
+import plotly.plotly as py
+from plotly.graph_objs import *
+#py.sign_in('davhunt', 'tMq1Y2WOP6RtlR46vXmS')
+trace1 = {
+	"x": ["b0", "X_Axis", "Y_Axis", "Z_Axis"],
+	"y": SNR_output1,
+	"marker": {
+		"color": "rgb(158,202,225)",
+		"line": {
+			"color": "rgb(8,48,107)",
+			"width": 1.0
+		}
+	},
+	"opacity": 0.6,
+	"text": [
+		"direction " + str(gtab.bvecs[0]),
+		"direction " + str(gtab.bvecs[axis_X]),
+		"direction " + str(gtab.bvecs[axis_Y]),
+		"direction " + str(gtab.bvecs[axis_Z])
+	],
+	"type": "bar"
+}
+data = Data([trace1])
+layout = {"title": "SNRs"}
+fig = Figure(data=data, layout=layout)
+plot_url = py.plot(fig)
+
 
 """SNR for the b=0 image is : ''42.0695455758''"""
 """SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""
