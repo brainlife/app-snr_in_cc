@@ -209,7 +209,7 @@ results['brainlife'].append({
 #            "directions": directions
 #            })
 
-with open("product2.json", "w") as out_file:
+with open("product.json", "w") as out_file:
     json.dump(results, out_file)
 
 """SNR for the b=0 image is : ''42.0695455758''"""
