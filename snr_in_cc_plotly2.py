@@ -151,7 +151,7 @@ axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
 axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
 
 #SNR_output = []
-SNR_outpu1 = []
+SNR_output1 = []
 directions = []
 b0 = True
 for direction in (0, axis_X, axis_Y, axis_Z):
