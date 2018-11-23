@@ -200,6 +200,9 @@ bvecs_sorted.append(z_sorted)
 
 colors = []
 direction = []
+colors.append("#000000")
+direction.append("b0, ")
+
 for i in range(0, len(bvecs_sorted[0])):
 	colors.append("#FF0000")
 	direction.append("X, ")
@@ -213,7 +216,8 @@ for i in range(0, len(bvecs_sorted[2])):
 SNR_output = []
 directions = []
 
-
+SNR_output.append(mean_signal[0]/noise_std)
+directions.append("inf inf inf")
 
 for j in range(0, len(bvecs_sorted)):
 	for i in range(0, len(bvecs_sorted[j])):
