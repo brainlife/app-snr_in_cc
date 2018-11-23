@@ -221,10 +221,10 @@ for j in range(0, len(bvecs_sorted)):
 
 dirxs = []
 for i in range(0, len(directions)):
-	dirxs.append(str(directions[i]))
-drrxs = []
-for i in range(0, len(dirxs)):
-	drrxs.append(direction[i] + dirxs[i])
+	dirxs.append(direction[i] + str(directions[i]))
+#drrxs = []
+#for i in range(0, len(dirxs)):
+#	drrxs.append(direction[i] + dirxs[i])
 
 
 
@@ -276,7 +276,7 @@ results['brainlife'].append({
 			}
 		},
 		"y": SNR_output,
-		"x": drrxs,
+		"x": dirxs,
 		"type": "bar"
 	}
 	]
