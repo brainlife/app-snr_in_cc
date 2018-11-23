@@ -219,6 +219,9 @@ for j in range(0, len(bvecs_sorted)):
 		SNR_output.append(SNR)
 		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
 
+dirxs = []
+for i in range(0, len(directions)):
+	dirxs.append(str(directions[i]))
 	
 
 
@@ -263,7 +266,7 @@ results['brainlife'].append({
 	{
 		"opacity": 0.6,
 		"text": [
-			direction + directions
+			direction + dirxs
 		],
 		"marker": {
 			"color": colors,
