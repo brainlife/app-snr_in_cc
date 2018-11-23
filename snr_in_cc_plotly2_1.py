@@ -267,9 +267,7 @@ results['brainlife'].append({
 	"data": [
 	{
 		"opacity": 0.6,
-		"text": [
-			drrxs
-		],
+		"text": drrxs,
 		"marker": {
 			"color": colors,
 			"line": {
