@@ -213,6 +213,8 @@ for i in range(0, len(bvecs_sorted[2])):
 SNR_output = []
 directions = []
 
+
+
 for j in range(0, len(bvecs_sorted)):
 	for i in range(0, len(bvecs_sorted[j])):
 		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
@@ -222,10 +224,6 @@ for j in range(0, len(bvecs_sorted)):
 dirxs = []
 for i in range(0, len(directions)):
 	dirxs.append(direction[i] + str(directions[i]))
-#drrxs = []
-#for i in range(0, len(dirxs)):
-#	drrxs.append(direction[i] + dirxs[i])
-
 
 
 
@@ -247,9 +245,6 @@ for i in range(0, len(directions)):
 
 
 
-
-
-#data = []
 results = {"brainlife": []}
 
 results['brainlife'].append({
@@ -267,7 +262,7 @@ results['brainlife'].append({
 	"data": [
 	{
 		"opacity": 0.6,
-		"text": drrxs,
+		"text": dirxs,
 		"marker": {
 			"color": colors,
 			"line": {
@@ -281,11 +276,6 @@ results['brainlife'].append({
 	}
 	]
 })
-
-#data.append({
-            #"SNR data": SNR_output,
-            #"directions": directions
-            #})
 
 with open("product.json", "w") as out_file:
     json.dump(results, out_file)
