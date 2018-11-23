@@ -276,7 +276,7 @@ results['brainlife'].append({
 			}
 		},
 		"y": SNR_output,
-		"x": directions,
+		"x": drrxs,
 		"type": "bar"
 	}
 	]
