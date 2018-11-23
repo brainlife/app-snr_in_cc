@@ -200,15 +200,15 @@ bvecs_sorted.append(z_sorted)
 
 colors = []
 direction = []
-for i in len(bvecs_sorted[0]):
+for i in range(0, len(bvecs_sorted[0])):
 	colors.append("#FF0000")
-	direction.append("X")
-for i in len(bvecs_sorted[1]):
+	direction.append("X, ")
+for i in range(0, len(bvecs_sorted[1])):
 	colors.append("#0000FF")
-	direction.append("Y")
-for i in len(bvecs_sorted[2]):
+	direction.append("Y, ")
+for i in range(0, len(bvecs_sorted[2])):
 	colors.append("#00FF00")
-	direction.append("Z")
+	direction.append("Z, ")
 
 SNR_output = []
 directions = []
