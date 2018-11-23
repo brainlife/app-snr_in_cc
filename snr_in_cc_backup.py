@@ -47,6 +47,7 @@ from dipy.segment.mask import segment_from_cfa
 from dipy.segment.mask import bounding_box
 
 import sys
+import json
 
 ## load data
 #fetch_stanford_hardi()
@@ -132,7 +133,7 @@ mask_noise = binary_dilation(mask, iterations=10)
 mask_noise[..., :mask_noise.shape[-1]//2] = 1
 mask_noise = ~mask_noise
 mask_noise_img = nib.Nifti1Image(mask_noise.astype(np.uint8), affine)
-#nib.save(mask_noise_img, 'mask_noise.nii.gz')
+nib.save(mask_noise_img, 'mask_noise.nii.gz')
 
 noise_std = np.std(data[mask_noise, :])
 print('Noise standard deviation sigma= ', noise_std)
@@ -151,26 +152,28 @@ gtab.bvecs[idx] = np.inf
 
 SNR_output = []
 directions = []
-for direction in [0, axis_X, axis_Y, axis_Z]:
+b0 = True
+for direction in range(0, len(gtab.bvecs)):
     SNR = mean_signal[direction]/noise_std
-    if direction == 0 :
+    if gtab.bvecs[direction][0] == np.inf and b0 == True:
         print("SNR for the b=0 image is :", SNR)
-    else :
+        SNR_output.append(str(direction) + ', ' + str(SNR))
+        directions.append('b0')
+        b0 = False
+    elif gtab.bvecs[direction][0] != np.inf:
         print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
-    SNR_output.append(SNR)
-    directions.append(direction)
-    directions.append(gtab.bvecs[direction])
+        SNR_output.append(str(direction) + ', ' + str(SNR))
+        directions.append(str(direction) + ', ' + str(gtab.bvecs[direction]))
 
 data = []
 
 data.append({
-            'data': SNR_output,
-            'directions': directions
+            "SNR data": SNR_output,
+            "directions": directions
             })
 
-out_file = open("results.txt", "w")
-out_file.write(str(data))
-out_file.close()
+with open("product.json", "w") as out_file:
+    json.dump(data[0], out_file)
 
 """SNR for the b=0 image is : ''42.0695455758''"""
 """SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""

@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 
@@ -133,7 +133,7 @@ mask_noise = binary_dilation(mask, iterations=10)
 mask_noise[..., :mask_noise.shape[-1]//2] = 1
 mask_noise = ~mask_noise
 mask_noise_img = nib.Nifti1Image(mask_noise.astype(np.uint8), affine)
-#nib.save(mask_noise_img, 'mask_noise.nii.gz')
+nib.save(mask_noise_img, 'mask_noise.nii.gz')
 
 noise_std = np.std(data[mask_noise, :])
 print('Noise standard deviation sigma= ', noise_std)

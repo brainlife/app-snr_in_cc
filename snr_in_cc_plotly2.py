@@ -133,7 +133,7 @@ mask_noise = binary_dilation(mask, iterations=10)
 mask_noise[..., :mask_noise.shape[-1]//2] = 1
 mask_noise = ~mask_noise
 mask_noise_img = nib.Nifti1Image(mask_noise.astype(np.uint8), affine)
-#nib.save(mask_noise_img, 'mask_noise.nii.gz')
+nib.save(mask_noise_img, 'mask_noise.nii.gz')
 
 noise_std = np.std(data[mask_noise, :])
 print('Noise standard deviation sigma= ', noise_std)
@@ -146,40 +146,39 @@ the X, Y and Z axes.
 # Exclude null bvecs from the search
 idx = np.sum(gtab.bvecs, axis=-1) == 0
 gtab.bvecs[idx] = np.inf
-axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
-axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
-axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
+#axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
+#axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
+#axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
 
 SNR_output = []
 directions = []
 b0 = True
-for direction in (0, axis_X, axis_Y, axis_Z):
+for direction in range(0, len(gtab.bvecs)):
     SNR = mean_signal[direction]/noise_std
-    if gtab.bvecs[direction][0] == np.inf:
+    if gtab.bvecs[direction][0] == np.inf and b0 == True:
         print("SNR for the b=0 image is :", SNR)
         SNR_output.append(SNR)
         directions.append('b0')
+        b0 = False
     elif gtab.bvecs[direction][0] != np.inf:
         print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
         SNR_output.append(SNR)
         directions.append(str(direction) + ', ' + str(gtab.bvecs[direction]))
 
+#data = []
 results = {"brainlife": []}
 
 results['brainlife'].append({
 	"type": "plotly",
 	"layout": {
-		"title": "SNRs in b0 and X, Y, and Z directions"
+		"title": "SNRs in each directions"
 	},
-	"name": "SNRs in b0, X, Y, and Z directions",
+	"name": "SNRs in different directions",
 	"data": [
 	{
 		"opacity": 0.6,
 		"text": [
-			"direction " + str(gtab.bvecs[0]),
-			"direction " + str(gtab.bvecs[axis_X]),
-			"direction " + str(gtab.bvecs[axis_Y]),
-			"direction " + str(gtab.bvecs[axis_Z])
+			directions
 		],
 		"marker": {
 			"color": "rgb(158,202,225)",
@@ -189,16 +188,16 @@ results['brainlife'].append({
 			}
 		},
 		"y": SNR_output,
-		"x": [
-			"b0",
-			"X_Axis",
-			"Y_Axis",
-			"Z_Axis"
-		],
+		"x": directions,
 		"type": "bar"
 	}
 	]
 })
+
+#data.append({
+            #"SNR data": SNR_output,
+            #"directions": directions
+            #})
 
 with open("product.json", "w") as out_file:
     json.dump(results, out_file)
