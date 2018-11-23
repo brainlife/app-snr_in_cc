@@ -222,7 +222,9 @@ for j in range(0, len(bvecs_sorted)):
 dirxs = []
 for i in range(0, len(directions)):
 	dirxs.append(str(directions[i]))
-	
+drrxs = []
+for i in range(0, len(dirxs)):
+	drrxs[i] = direction + dirxs 
 
 
 
@@ -266,7 +268,7 @@ results['brainlife'].append({
 	{
 		"opacity": 0.6,
 		"text": [
-			direction + dirxs
+			drrxs
 		],
 		"marker": {
 			"color": colors,
