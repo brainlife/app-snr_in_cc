@@ -224,30 +224,9 @@ for j in range(0, len(bvecs_sorted)):
 		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
 		SNR_output.append(SNR)
 		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
-
 dirxs = []
 for i in range(0, len(directions)):
 	dirxs.append(direction[i] + str(directions[i]))
-
-
-
-
-#SNR_output = []
-#directions = []
-#b0 = True
-#for direction in range(0, len(gtab.bvecs)):
-    #SNR = mean_signal[direction]/noise_std
-    #if gtab.bvecs[direction][0] == np.inf and b0 == True:
-        #print("SNR for the b=0 image is :", SNR)
-        #SNR_output.append(SNR)
-        #directions.append('b0')
-        #b0 = False
-    #elif gtab.bvecs[direction][0] != np.inf:
-        #print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
-        #SNR_output.append(SNR)
-        #directions.append(str(direction) + ', ' + str(gtab.bvecs[direction]))
-
-
 
 results = {"brainlife": []}
 
@@ -284,10 +263,6 @@ results['brainlife'].append({
 with open("product.json", "w") as out_file:
     json.dump(results, out_file)
 
-"""SNR for the b=0 image is : ''42.0695455758''"""
-"""SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""
-"""SNR for direction 57  [-0.05039  0.99871  0.0054406] is : ''23.9329492871''"""
-"""SNR for direction 126 [-0.11825  -0.039925  0.99218 ] is : ''23.9965694823''"""
 
 """
 
