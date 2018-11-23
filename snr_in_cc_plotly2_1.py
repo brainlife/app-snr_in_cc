@@ -224,7 +224,7 @@ for i in range(0, len(directions)):
 	dirxs.append(str(directions[i]))
 drrxs = []
 for i in range(0, len(dirxs)):
-	drrxs[i] = direction + dirxs 
+	drrxs.append(direction + dirxs)
 
 
 
