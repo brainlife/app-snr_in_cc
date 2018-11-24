@@ -48,8 +48,6 @@ from dipy.segment.mask import bounding_box
 
 import sys
 import json
-import os
-subj = os.environ['SUBJ_DIR']
 
 ## load data
 #fetch_stanford_hardi()
@@ -241,7 +239,7 @@ results['brainlife'].append({
 		"xaxis": {
 			"type": "category"
 		},
-		"title": subj
+		"title": "SNRs"
 	},
 	"name": "SNRs in different directions",
 	"data": [
