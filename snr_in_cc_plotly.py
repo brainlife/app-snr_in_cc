@@ -149,6 +149,10 @@ gtab.bvecs[idx] = np.inf
 #axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
 #axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
 #axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
+
+
+# Sort the bvecs by their closeness to the X-axis, followed by Y and Z
+
 dist_x, dist_y, dist_z = [], [], []
 
 for i in range(0, len(gtab.bvecs)):
@@ -224,9 +228,7 @@ for j in range(0, len(bvecs_sorted)):
 	for i in range(0, len(bvecs_sorted[j])):
 		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
 		SNR_output.append(SNR)
-
 		SNR_output1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(SNR))
-
 		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
 		directions1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(gtab.bvecs[bvecs_sorted[j][i][0]]))
 dirxs = []
