@@ -149,9 +149,7 @@ gtab.bvecs[idx] = np.inf
 #axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
 #axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
 #axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
-dist_x = []
-dist_y = []
-dist_z = []
+dist_x, dist_y, dist_z = [], [], []
 
 for i in range(0, len(gtab.bvecs)):
 	if gtab.bvecs[i][0] >= 0.0:
@@ -214,21 +212,32 @@ for i in range(0, len(bvecs_sorted[2])):
 	direction.append("Z, ")
 
 SNR_output = []
+SNR_output1 = []
 directions = []
+directions1 = []
 
 SNR_output.append(mean_signal[0]/noise_std)
+SNR_output1.append(str(mean_signal[0]/noise_std))
 directions.append("inf inf inf")
 
 for j in range(0, len(bvecs_sorted)):
 	for i in range(0, len(bvecs_sorted[j])):
 		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
 		SNR_output.append(SNR)
+
+		SNR_output1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(SNR))
+
 		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
+		directions1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(gtab.bvecs[bvecs_sorted[j][i][0]]))
 dirxs = []
 for i in range(0, len(directions)):
 	dirxs.append(direction[i] + str(directions[i]))
 
-results = {"brainlife": []}
+results = {
+	"SNR data": SNR_output1,
+	"directions": directions1,
+	"brainlife": []
+}
 
 results['brainlife'].append({
 	"type": "plotly",

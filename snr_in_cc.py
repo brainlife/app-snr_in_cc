@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 
@@ -172,7 +172,7 @@ data.append({
             "directions": directions
             })
 
-with open("product.json", "w") as out_file:
+with open("product1.json", "w") as out_file:
     json.dump(data[0], out_file)
 
 """SNR for the b=0 image is : ''42.0695455758''"""
