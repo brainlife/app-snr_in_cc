@@ -217,7 +217,7 @@ directions = []
 directions1 = []
 
 SNR_output.append(mean_signal[0]/noise_std)
-SNR_output1.append(str(mean_signal[0]/noise_std))
+SNR_output1.append("b0, " + str(mean_signal[0]/noise_std))
 directions.append("inf inf inf")
 
 for j in range(0, len(bvecs_sorted)):
