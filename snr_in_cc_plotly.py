@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 
 """
 
@@ -146,55 +146,124 @@ the X, Y and Z axes.
 # Exclude null bvecs from the search
 idx = np.sum(gtab.bvecs, axis=-1) == 0
 gtab.bvecs[idx] = np.inf
-axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
-axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
-axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
+#axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
+#axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
+#axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
+dist_x, dist_y, dist_z = [], [], []
+
+for i in range(0, len(gtab.bvecs)):
+	if gtab.bvecs[i][0] >= 0.0:
+		dist_x.append(np.sqrt((gtab.bvecs[i][0]-1)**2 + gtab.bvecs[i][1]**2 + gtab.bvecs[i][2]**2))
+	elif gtab.bvecs[i][0] < 0.0:
+		dist_x.append(np.sqrt((gtab.bvecs[i][0]+1)**2 + gtab.bvecs[i][1]**2 + gtab.bvecs[i][2]**2))
+
+for i in range(0, len(gtab.bvecs)):
+	if gtab.bvecs[i][1] >= 0.0:
+		dist_y.append(np.sqrt(gtab.bvecs[i][0]**2 + (gtab.bvecs[i][1]-1)**2 + gtab.bvecs[i][2]**2))
+	elif gtab.bvecs[i][1] < 0.0:
+		dist_y.append(np.sqrt(gtab.bvecs[i][0]**2 + (gtab.bvecs[i][1]+1)**2 + gtab.bvecs[i][2]**2))
+
+for i in range(0, len(gtab.bvecs)):
+	if gtab.bvecs[i][2] >= 0.0:
+		dist_z.append(np.sqrt(gtab.bvecs[i][0]**2 + gtab.bvecs[i][1]**2 + (gtab.bvecs[i][2]-1)**2))
+	elif gtab.bvecs[i][2] < 0.0:
+		dist_z.append(np.sqrt(gtab.bvecs[i][0]**2 + gtab.bvecs[i][1]**2 + (gtab.bvecs[i][2]+1)**2))
+
+x_list, y_list, z_list = [], [], []
+for i in range(0, len(gtab.bvecs)):
+	if dist_x[i] < dist_y[i] and dist_x[i] < dist_z[i]:
+		x_list.append(i)
+	elif dist_y[i] < dist_x[i] and dist_y[i] < dist_z[i]:
+		y_list.append(i)
+	elif dist_z[i] < dist_x[i] and dist_z[i] < dist_y[i]:
+		z_list.append(i)
+
+x_sorted, y_sorted, z_sorted = [], [], []
+for i in x_list:
+	x_sorted.append((i, dist_x[i]))
+x_sorted = sorted(x_sorted, key=lambda tup: tup[1])
+
+for i in y_list:
+	y_sorted.append((i, dist_y[i]))
+y_sorted = sorted(y_sorted, key=lambda tup: tup[1])
+
+for i in z_list:
+	z_sorted.append((i, dist_z[i]))
+z_sorted = sorted(z_sorted, key=lambda tup: tup[1])
+
+bvecs_sorted = []
+bvecs_sorted.append(x_sorted)
+bvecs_sorted.append(y_sorted)
+bvecs_sorted.append(z_sorted)
+
+colors = []
+direction = []
+colors.append("#000000")
+direction.append("b0, ")
+
+for i in range(0, len(bvecs_sorted[0])):
+	colors.append("#FF0000")
+	direction.append("X, ")
+for i in range(0, len(bvecs_sorted[1])):
+	colors.append("#0000FF")
+	direction.append("Y, ")
+for i in range(0, len(bvecs_sorted[2])):
+	colors.append("#00FF00")
+	direction.append("Z, ")
 
 SNR_output = []
+SNR_output1 = []
 directions = []
-b0 = True
-for direction in (0, axis_X, axis_Y, axis_Z):
-    SNR = mean_signal[direction]/noise_std
-    if gtab.bvecs[direction][0] == np.inf:
-        print("SNR for the b=0 image is :", SNR)
-        SNR_output.append(SNR)
-        directions.append('b0')
-    elif gtab.bvecs[direction][0] != np.inf:
-        print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
-        SNR_output.append(SNR)
-        directions.append(str(direction) + ', ' + str(gtab.bvecs[direction]))
+directions1 = []
 
-results = {"brainlife": []}
+SNR_output.append(mean_signal[0]/noise_std)
+SNR_output1.append("b0, " + str(mean_signal[0]/noise_std))
+directions.append("inf inf inf")
+
+for j in range(0, len(bvecs_sorted)):
+	for i in range(0, len(bvecs_sorted[j])):
+		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
+		SNR_output.append(SNR)
+
+		SNR_output1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(SNR))
+
+		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
+		directions1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(gtab.bvecs[bvecs_sorted[j][i][0]]))
+dirxs = []
+for i in range(0, len(directions)):
+	dirxs.append(direction[i] + str(directions[i]))
+
+results = {
+	"SNR data": SNR_output1,
+	"directions": directions1,
+	"brainlife": []
+}
 
 results['brainlife'].append({
 	"type": "plotly",
 	"layout": {
-		"title": "SNRs in b0 and X, Y, and Z directions"
+		"yaxis": {
+			"title": "SNR"
+		},
+		"xaxis": {
+			"type": "category"
+		},
+		"title": "SNRs"
 	},
-	"name": "SNRs in b0, X, Y, and Z directions",
+	"name": "SNRs in different directions",
 	"data": [
 	{
 		"opacity": 0.6,
-		"text": [
-			"direction " + str(gtab.bvecs[0]),
-			"direction " + str(gtab.bvecs[axis_X]),
-			"direction " + str(gtab.bvecs[axis_Y]),
-			"direction " + str(gtab.bvecs[axis_Z])
-		],
+		"text": dirxs,
 		"marker": {
-			"color": "rgb(158,202,225)",
+			"color": colors,
 			"line": {
 				"color": "rgb(8,48,107)",
 				"width": 1.5
 			}
 		},
 		"y": SNR_output,
-		"x": [
-			"b0",
-			"X_Axis",
-			"Y_Axis",
-			"Z_Axis"
-		],
+		"x": dirxs,
 		"type": "bar"
 	}
 	]
@@ -203,10 +272,6 @@ results['brainlife'].append({
 with open("product.json", "w") as out_file:
     json.dump(results, out_file)
 
-"""SNR for the b=0 image is : ''42.0695455758''"""
-"""SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""
-"""SNR for direction 57  [-0.05039  0.99871  0.0054406] is : ''23.9329492871''"""
-"""SNR for direction 126 [-0.11825  -0.039925  0.99218 ] is : ''23.9965694823''"""
 
 """
 
