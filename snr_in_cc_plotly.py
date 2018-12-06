@@ -227,9 +227,9 @@ directions.append("inf inf inf")
 for j in range(0, len(bvecs_sorted)):
 	for i in range(0, len(bvecs_sorted[j])):
 		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
-		if isinstance(SNR, np.float64) or isinstance(SNR, np.float32):
-			SNR = float(SNR)
-		SNR_output.append(SNR)
+		#if isinstance(SNR, np.float64) or isinstance(SNR, np.float32):
+		#	SNR = float(SNR)
+		SNR_output.append(str(SNR))
 		SNR_output1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(SNR))
 		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
 		directions1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(gtab.bvecs[bvecs_sorted[j][i][0]]))
