@@ -220,7 +220,7 @@ SNR_output1 = []
 directions = []
 directions1 = []
 
-SNR_output.append(mean_signal[0]/noise_std)
+SNR_output.append(str(mean_signal[0]/noise_std))
 SNR_output1.append("b0, " + str(mean_signal[0]/noise_std))
 directions.append("inf inf inf")
 
