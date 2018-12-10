@@ -1,24 +1,54 @@
 #!/usr/bin/env python
 
-import logging
-import shutil
-import numpy as np
+"""
+
+=============================================
+SNR estimation for Diffusion-Weighted Images
+=============================================
+
+Computing the Signal-to-Noise-Ratio (SNR) of DW images is still an open
+question, as SNR depends on the white matter structure of interest as well as
+the gradient direction corresponding to each DWI.
+
+In classical MRI, SNR can be defined as the ratio of the mean of the signal
+divided by the standard deviation of the underlying Gaussian noise, that is
+$SNR = mean(signal) / std(noise)$. The noise standard deviation can be computed
+from the background in any of the DW images. How do we compute the mean of the
+signal, and what signal?
+
+The strategy here is to compute a 'worst-case' SNR for DWI. Several white
+matter structures such as the corpus callosum (CC), corticospinal tract (CST),
+or the superior longitudinal fasciculus (SLF) can be easily identified from the
+colored-FA (CFA) map. In this example, we will use voxels from the CC, which
+have the characteristic of being highly red in the CFA map since they are
+mainly oriented in the left-right direction. We know that the DW image closest
+to the X-direction will be the one with the most attenuated diffusion signal.
+This is the strategy adopted in several recent papers (see [Descoteaux2011]_
+and [Jones2013]_). It gives a good indication of the quality of the DWI data.
+
+First, we compute the tensor model in a brain mask (see the :ref:`reconst_dti`
+example for further explanations).
+
+"""
+
+
+
+#from __future__ import division, print_function
 import nibabel as nib
-import sys
-import os
-import json
+import numpy as np
+import matplotlib.pyplot as plt
 from scipy.ndimage.morphology import binary_dilation
 
+#from dipy.data import fetch_stanford_hardi, read_stanford_hardi
 from dipy.io import read_bvals_bvecs
 from dipy.core.gradients import gradient_table
 from dipy.segment.mask import median_otsu
 from dipy.reconst.dti import TensorModel
-        
+
 from dipy.segment.mask import segment_from_cfa
 from dipy.segment.mask import bounding_box
 
 import sys
-import json
 
 ## load data
 #fetch_stanford_hardi()
@@ -104,7 +134,7 @@ mask_noise = binary_dilation(mask, iterations=10)
 mask_noise[..., :mask_noise.shape[-1]//2] = 1
 mask_noise = ~mask_noise
 mask_noise_img = nib.Nifti1Image(mask_noise.astype(np.uint8), affine)
-nib.save(mask_noise_img, 'mask_noise.nii.gz')
+#nib.save(mask_noise_img, 'mask_noise.nii.gz')
 
 noise_std = np.std(data[mask_noise, :])
 print('Noise standard deviation sigma= ', noise_std)
@@ -117,155 +147,21 @@ the X, Y and Z axes.
 # Exclude null bvecs from the search
 idx = np.sum(gtab.bvecs, axis=-1) == 0
 gtab.bvecs[idx] = np.inf
-
-
-# Sort the bvecs by their closeness to the X-axis, followed by Y and Z
-
-dist_x, dist_y, dist_z = [], [], []
-
-for i in range(0, len(gtab.bvecs)):
-	if gtab.bvecs[i][0] >= 0.0:
-		dist_x.append(np.sqrt((gtab.bvecs[i][0]-1)**2 + gtab.bvecs[i][1]**2 + gtab.bvecs[i][2]**2))
-	elif gtab.bvecs[i][0] < 0.0:
-		dist_x.append(np.sqrt((gtab.bvecs[i][0]+1)**2 + gtab.bvecs[i][1]**2 + gtab.bvecs[i][2]**2))
-
-for i in range(0, len(gtab.bvecs)):
-	if gtab.bvecs[i][1] >= 0.0:
-		dist_y.append(np.sqrt(gtab.bvecs[i][0]**2 + (gtab.bvecs[i][1]-1)**2 + gtab.bvecs[i][2]**2))
-	elif gtab.bvecs[i][1] < 0.0:
-		dist_y.append(np.sqrt(gtab.bvecs[i][0]**2 + (gtab.bvecs[i][1]+1)**2 + gtab.bvecs[i][2]**2))
-
-for i in range(0, len(gtab.bvecs)):
-	if gtab.bvecs[i][2] >= 0.0:
-		dist_z.append(np.sqrt(gtab.bvecs[i][0]**2 + gtab.bvecs[i][1]**2 + (gtab.bvecs[i][2]-1)**2))
-	elif gtab.bvecs[i][2] < 0.0:
-		dist_z.append(np.sqrt(gtab.bvecs[i][0]**2 + gtab.bvecs[i][1]**2 + (gtab.bvecs[i][2]+1)**2))
-
-x_list, y_list, z_list = [], [], []
-for i in range(0, len(gtab.bvecs)):
-	if dist_x[i] < dist_y[i] and dist_x[i] < dist_z[i]:
-		x_list.append(i)
-	elif dist_y[i] < dist_x[i] and dist_y[i] < dist_z[i]:
-		y_list.append(i)
-	elif dist_z[i] < dist_x[i] and dist_z[i] < dist_y[i]:
-		z_list.append(i)
-
-x_sorted, y_sorted, z_sorted = [], [], []
-for i in x_list:
-	x_sorted.append((i, dist_x[i]))
-x_sorted = sorted(x_sorted, key=lambda tup: tup[1])
-
-for i in y_list:
-	y_sorted.append((i, dist_y[i]))
-y_sorted = sorted(y_sorted, key=lambda tup: tup[1])
-
-for i in z_list:
-	z_sorted.append((i, dist_z[i]))
-z_sorted = sorted(z_sorted, key=lambda tup: tup[1])
-
-bvecs_sorted = []
-bvecs_sorted.append(x_sorted)
-bvecs_sorted.append(y_sorted)
-bvecs_sorted.append(z_sorted)
-
-colors = []
-direction = []
-colors.append("#000000")
-direction.append("b0, ")
-
-for i in range(0, len(bvecs_sorted[0])):
-	colors.append("#FF0000")
-	direction.append("X, ")
-for i in range(0, len(bvecs_sorted[1])):
-	colors.append("#0000FF")
-	direction.append("Y, ")
-for i in range(0, len(bvecs_sorted[2])):
-	colors.append("#00FF00")
-	direction.append("Z, ")
-
-SNR_output = []
-SNR_output1 = []
-directions = []
-directions1 = []
-
-SNR_output.append(str(mean_signal[0]/noise_std))
-SNR_output1.append("b0, " + str(mean_signal[0]/noise_std))
-directions.append("inf inf inf")
-
-for j in range(0, len(bvecs_sorted)):
-	for i in range(0, len(bvecs_sorted[j])):
-		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
-		#if isinstance(SNR, np.float64) or isinstance(SNR, np.float32):
-		#	SNR = float(SNR)
-		SNR_output.append(str(SNR))
-		SNR_output1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(SNR))
-		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
-		directions1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(gtab.bvecs[bvecs_sorted[j][i][0]]))
-dirxs = []
-for i in range(0, len(directions)):
-	dirxs.append(direction[i] + str(directions[i]))
-
-
-
-
-#Get the X-most, Y-most, Z-most vectors
 axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
 axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
 axis_Z = np.argmin(np.sum((gtab.bvecs-np.array([0, 0, 1]))**2, axis=-1))
 
-SNR_xyz = []
-directions_xyz = []
-directions_xyz.append('b0')
+for direction in [0, axis_X, axis_Y, axis_Z]:
+    SNR = mean_signal[direction]/noise_std
+    if direction == 0 :
+        print("SNR for the b=0 image is :", SNR)
+    else :
+        print("SNR for direction", direction, " ", gtab.bvecs[direction], "is :", SNR)
 
-for direction in ['b0', axis_X, axis_Y, axis_Z]:
-	if direction == 'b0':
-		SNR = mean_signal[0]/noise_std
-	else:
-		SNR = mean_signal[direction]/noise_std
-		directions_xyz.append(str(direction))
-	SNR_xyz.append(str(SNR))
-
-results = {
-	"SNR in b0, X, Y, Z": SNR_xyz,
-	"b0, X, Y, Z directions": directions_xyz,
-	"SNR data all directions": SNR_output1,
-	"direction vectors": directions1,
-	"brainlife": []
-}
-
-results['brainlife'].append({
-	"type": "plotly",
-	"layout": {
-		"yaxis": {
-			"title": "SNR"
-		},
-		"xaxis": {
-			"type": "category"
-		},
-		"title": "SNRs"
-	},
-	"name": "SNRs in different directions",
-	"data": [
-	{
-		"opacity": 0.6,
-		"text": dirxs,
-		"marker": {
-			"color": colors,
-			"line": {
-				"color": "rgb(8,48,107)",
-				"width": 1.5
-			}
-		},
-		"y": SNR_output,
-		"x": dirxs,
-		"type": "bar"
-	}
-	]
-})
-
-with open("product.json", "w") as out_file:
-    json.dump(results, out_file)
-
+"""SNR for the b=0 image is : ''42.0695455758''"""
+"""SNR for direction 58  [ 0.98875  0.1177  -0.09229] is : ''5.46995373635''"""
+"""SNR for direction 57  [-0.05039  0.99871  0.0054406] is : ''23.9329492871''"""
+"""SNR for direction 126 [-0.11825  -0.039925  0.99218 ] is : ''23.9965694823''"""
 
 """
 

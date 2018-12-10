@@ -4,7 +4,6 @@
 #PBS -l walltime=00:05:00
 
 #parse config.json for input parameters
-out1=$(jq -r .dwi config.json)
-out2=$(jq -r .bvals config.json)
-out3=$(jq -r .bvecs config.json)
-./snr_in_cc.py "$out1" "$out2" "$out3"
+out1=$(jq -r .dwi_dir config.json)
+./snr_in_cc.py "$out1"
+#SINGULARITYENV_PYTHONNOUSERSITE=true singularity exec -e docker://brainlife/dipy:0.14.1 ./snr_in_cc.py "$out1"
