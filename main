@@ -10,4 +10,6 @@ module load python/2.7.13
 out1=$(jq -r .dwi config.json)
 out2=$(jq -r .bvals config.json)
 out3=$(jq -r .bvecs config.json)
-./snr_in_cc.py "$out1" "$out2" "$out3"
+
+singularity exec -e docker://brainlife/dipy:0.16.0 ./snr_in_cc.py "$out1" "$out2" "$out3"
+#./snr_in_cc.py "$out1" "$out2" "$out3"
