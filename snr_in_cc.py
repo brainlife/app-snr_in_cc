@@ -261,6 +261,16 @@ for direction in ['b0', axis_X, axis_Y, axis_Z]:
 		directions_xyz.append(str(direction))
 	SNR_xyz.append(str(SNR))
 
+
+
+x_vals = []
+x_vals.append(1)
+x_vals.append(len(dirxs))
+y_vals = []
+y_vals.append(SNR_xyz[0])
+y_vals.append(SNR_xyz[0])
+
+
 results = {
 	"SNR in b0, X, Y, Z": SNR_xyz,
 	"b0, X, Y, Z directions": directions_xyz,
@@ -278,19 +288,7 @@ results['brainlife'].append({
 		"xaxis": {
 			"type": "category"
 		},
-		"title": "SNRs",
-                "shapes": {
-                        "type": "line",
-                        "x0": 1,
-                        "y0": SNR_xyz[0],
-                        "x1": len(dirxs) - 1,
-                        "y1": SNR_xyz[0],
-                        "line": {
-                                "color": "LightSeaGreen",
-                                "width": 1.0,
-                                "dash": "dashdot"
-                        }
-                }
+		"title": "SNRs"
 	},
 	"name": "SNRs in corpus callosum in different directions",
         "desc": "The greenline on the graph shows the SNR for b0 (no mag field gradient applied) which is the maximum SNR that this image can have. It should be around 18.0 to 22.0 for a good image. XYZ bars are expected to be below this, but it should still be around 10-15 for YZ. X ought to be the lowest since the CC consists primarily of left-right commissural WM fibers (while Y is anterior/posterior and Z is superior/inferior)",
@@ -308,7 +306,23 @@ results['brainlife'].append({
 		"y": SNR_output,
 		"x": dirxs,
 		"type": "bar"
-        }
+        },
+        {
+                "opacity": 1.0,
+                "x": x_vals,
+                "y": y_vals,
+#                "x": {
+#                },
+#                "y": {
+#                },
+                "line": {
+                        "color": "LightSeaGreen",
+                        "width": 1.0,
+                        "dash": "dashdot",
+                        "shape": "linear"
+                },
+                "type": "scatter",
+                "mode": "lines"
         ]
 })
 
