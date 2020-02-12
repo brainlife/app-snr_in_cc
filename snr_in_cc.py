@@ -296,23 +296,23 @@ results['brainlife'].append({
 		"y": SNR_output,
 		"x": dirxs,
 		"type": "bar"
-	}
-	],
-        "data": [
-        {
+	},
+	{
+                "opacity": 0.6,
                 "x0": 0,
                 "y0": SNR_xyz[0],
                 "x1": len(dirxs) - 1,
                 "y1": SNR_xyz[0],
-                "type": "line",
                 "line": {
                         "width": 0.5,
                         "color": "LightSeaGreen",
                         "dash": "dashdot"
-                }
+                },
+                "type": "line"
         }
         ]
 })
+
 
 with open("product.json", "w") as out_file:
     json.dump(results, out_file)
