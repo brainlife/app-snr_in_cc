@@ -261,14 +261,6 @@ for direction in ['b0', axis_X, axis_Y, axis_Z]:
 		directions_xyz.append(str(direction))
 	SNR_xyz.append(str(SNR))
 
-
-
-x_vals = []
-x_vals.append(dirxs)
-y_vals = []
-y_vals = [str(SNR_xyz[0]) for i in range(len(dirxs))]
-
-
 results = {
 	"SNR in b0, X, Y, Z": SNR_xyz,
 	"b0, X, Y, Z directions": directions_xyz,
@@ -308,15 +300,11 @@ results['brainlife'].append({
         {
                 "opacity": 1.0,
                 "x": dirxs,
-                "y": y_vals,
-#                "x": {
-#                },
-#                "y": {
-#                },
+                "y": [str(SNR_xyz[0]) for i in range(len(dirxs))],
                 "line": {
-                        "color": "LightSeaGreen",
+                        "color": "darkgreen",
                         "width": 1.0,
-                        "dash": "solid",
+                        "dash": "dashdot",
                         "shape": "linear"
                 },
                 "type": "scatter",
