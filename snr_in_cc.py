@@ -287,7 +287,8 @@ results['brainlife'].append({
                         "y1": SNR_xyz[0],
                         "line": {
                                 "color": "LightSeaGreen",
-                                "width": 1.0
+                                "width": 1.0,
+                                "dash": "dashdot"
                         }
                 }
 	},
