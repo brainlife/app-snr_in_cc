@@ -265,8 +265,10 @@ for direction in ['b0', axis_X, axis_Y, axis_Z]:
 
 x_vals = []
 x_vals.append(1)
+x_vals.append(50)
 x_vals.append(len(dirxs))
 y_vals = []
+y_vals.append(SNR_xyz[0])
 y_vals.append(SNR_xyz[0])
 y_vals.append(SNR_xyz[0])
 
