@@ -289,6 +289,7 @@ results['brainlife'].append({
                                 "color": "LightSeaGreen",
                                 "width": 1.0
                         }
+                }
 	},
 	"name": "SNRs in corpus callosum in different directions",
         "desc": "The greenline on the graph shows the SNR for b0 (no mag field gradient applied) which is the maximum SNR that this image can have. It should be around 18.0 to 22.0 for a good image. XYZ bars are expected to be below this, but it should still be around 10-15 for YZ. X ought to be the lowest since the CC consists primarily of left-right commissural WM fibers (while Y is anterior/posterior and Z is superior/inferior)",
