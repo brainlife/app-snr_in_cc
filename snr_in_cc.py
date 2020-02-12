@@ -323,6 +323,7 @@ results['brainlife'].append({
                 },
                 "type": "scatter",
                 "mode": "lines"
+        }
         ]
 })
 
