@@ -1,7 +1,39 @@
 #!/usr/bin/env python
 
-import logging
-import shutil
+"""
+
+=============================================
+SNR estimation for Diffusion-Weighted Images
+=============================================
+
+Computing the Signal-to-Noise-Ratio (SNR) of DW images is still an open
+question, as SNR depends on the white matter structure of interest as well as
+the gradient direction corresponding to each DWI.
+
+In classical MRI, SNR can be defined as the ratio of the mean of the signal
+divided by the standard deviation of the underlying Gaussian noise, that is
+$SNR = mean(signal) / std(noise)$. The noise standard deviation can be computed
+from the background in any of the DW images. How do we compute the mean of the
+signal, and what signal?
+
+The strategy here is to compute a 'worst-case' SNR for DWI. Several white
+matter structures such as the corpus callosum (CC), corticospinal tract (CST),
+or the superior longitudinal fasciculus (SLF) can be easily identified from the
+colored-FA (CFA) map. In this example, we will use voxels from the CC, which
+have the characteristic of being highly red in the CFA map since they are
+mainly oriented in the left-right direction. We know that the DW image closest
+to the X-direction will be the one with the most attenuated diffusion signal.
+This is the strategy adopted in several recent papers (see [Descoteaux2011]_
+and [Jones2013]_). It gives a good indication of the quality of the DWI data.
+
+First, we compute the tensor model in a brain mask (see the :ref:`reconst_dti`
+example for further explanations).
+
+"""
+
+import sys
+#from __future__ import division, print_function
+import nibabel as nib
 import numpy as np
 import nibabel as nib
 import sys
@@ -26,6 +58,12 @@ import json
 
 img = nib.load(sys.argv[1])
 bvals, bvecs = read_bvals_bvecs(sys.argv[2], sys.argv[3])
+
+# make sure any b0 image bvecs are unit rather than zero
+for i in range(0, len(bvals)):
+  if bvecs[i,0] == 0.0 and bvecs[i,1] == 0.0 and bvecs[i,2] == 0.0:
+    bvecs[i,0] = bvecs[i,1] = bvecs[i,2] = 0.577350
+
 gtab = gradient_table(bvals, bvecs)
 
 data = img.get_data()
@@ -242,7 +280,8 @@ results['brainlife'].append({
 		},
 		"title": "SNRs"
 	},
-	"name": "SNRs in different directions",
+	"name": "SNRs in corpus callosum in different directions",
+        "desc": "The dashed green line on the graph shows the SNR for b0 (no mag field gradient applied) which is the maximum SNR that this image can have. It should be around 18.0 to 22.0 for a good image. XYZ bars are expected to be below this, but it should still be around 10-15 for YZ. X ought to be the lowest since the CC consists primarily of left-right commissural WM fibers (while Y is anterior/posterior and Z is superior/inferior)",
 	"data": [
 	{
 		"opacity": 0.6,
@@ -257,9 +296,23 @@ results['brainlife'].append({
 		"y": SNR_output,
 		"x": dirxs,
 		"type": "bar"
-	}
-	]
+        },
+        {
+                "opacity": 1.0,
+                "x": dirxs,
+                "y": [str(SNR_xyz[0]) for i in range(len(dirxs))],
+                "line": {
+                        "color": "darkgreen",
+                        "width": 1.0,
+                        "dash": "dashdot",
+                        "shape": "linear"
+                },
+                "type": "scatter",
+                "mode": "lines"
+        }
+        ]
 })
+
 
 with open("product.json", "w") as out_file:
     json.dump(results, out_file)

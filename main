@@ -1,15 +1,18 @@
 #!/bin/bash
 
 #PBS -l nodes=1:ppn=1
-#PBS -l walltime=00:05:00
+#PBS -l walltime=00:20:00
+
+module unload python
+module load python/2.7.13
 
 #parse config.json for input parameters
 out1=$(jq -r .dwi config.json)
 out2=$(jq -r .bvals config.json)
 out3=$(jq -r .bvecs config.json)
-#./snr_in_cc.py "$out1"
-#SINGULARITYENV_PYTHONNOUSERSITE=true singularity exec -e docker://brainlife/dipy:0.14.1 ./snr_in_cc.py "$out1"
-time singularity exec -e docker://brainlife/dipy:0.16.0 ./snr_in_cc.py "$out1" "$out2" "$out3"
+
+singularity exec -e docker://brainlife/dipy:0.16.0 ./snr_in_cc.py "$out1" "$out2" "$out3"
+#./snr_in_cc.py "$out1" "$out2" "$out3"
 
 mkdir cc_mask && mkdir noise_mask
 mv cc.nii.gz cc_mask/mask.nii.gz && mv mask_noise.nii.gz noise_mask/mask.nii.gz
