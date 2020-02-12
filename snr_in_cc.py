@@ -32,7 +32,6 @@ example for further explanations).
 """
 
 import sys
-print(sys.version)
 #from __future__ import division, print_function
 import nibabel as nib
 import numpy as np
@@ -57,6 +56,12 @@ import json
 
 img = nib.load(sys.argv[1])
 bvals, bvecs = read_bvals_bvecs(sys.argv[2], sys.argv[3])
+
+# make sure any b0 image bvecs are unit rather than zero
+for i in range(0, len(bvals)):
+  if bvecs[i,0] == 0.0 and bvecs[i,1] == 0.0 and bvecs[i,2] == 0.0:
+    bvecs[i,0] = bvecs[i,1] = bvecs[i,2] = 0.577350
+
 gtab = gradient_table(bvals, bvecs)
 
 data = img.get_data()
