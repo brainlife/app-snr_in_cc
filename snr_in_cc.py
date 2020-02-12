@@ -280,7 +280,8 @@ results['brainlife'].append({
 		},
 		"title": "SNRs"
 	},
-	"name": "SNRs in different directions",
+	"name": "SNRs in corpus callosum in different directions",
+        "desc": "The greenline on the graph shows the SNR for b0 (no mag field gradient applied) which is the maximum SNR that this image can have. It should be around 18.0 to 22.0 for a good image. XYZ bars are expected to be below this, but it should still be around 10-15 for YZ. X ought to be the lowest since the CC consists primarily of left-right commissural WM fibers (while Y is anterior/posterior and Z is superior/inferior)",
 	"data": [
 	{
 		"opacity": 0.6,
@@ -296,7 +297,21 @@ results['brainlife'].append({
 		"x": dirxs,
 		"type": "bar"
 	}
-	]
+	],
+        "data": [
+        {
+                "x0": 0,
+                "y0": SNR_xyz[0],
+                "x1": len(dirxs) - 1,
+                "y1": SNR_xyz[0],
+                "type": "line",
+                "line": {
+                        "width": 0.5,
+                        "color": "LightSeaGreen",
+                        "dash": "dashdot"
+                }
+        }
+        ]
 })
 
 with open("product.json", "w") as out_file:
