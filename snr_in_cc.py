@@ -308,7 +308,7 @@ results['brainlife'].append({
         {
                 "opacity": 1.0,
                 "x": dirxs,
-                "y": y_vals,
+                "y": SNR_output,
 #                "x": {
 #                },
 #                "y": {
