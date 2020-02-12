@@ -266,7 +266,7 @@ for direction in ['b0', axis_X, axis_Y, axis_Z]:
 x_vals = []
 x_vals.append(dirxs)
 y_vals = []
-y_vals.append(SNR_xyz[0] for i in range(len(dirxs)))
+y_vals = [str(SNR_xyz[0]) for i in range(len(dirxs))]
 
 
 results = {
@@ -308,7 +308,7 @@ results['brainlife'].append({
         {
                 "opacity": 1.0,
                 "x": dirxs,
-                "y": SNR_output,
+                "y": y_vals,
 #                "x": {
 #                },
 #                "y": {
@@ -316,7 +316,7 @@ results['brainlife'].append({
                 "line": {
                         "color": "LightSeaGreen",
                         "width": 1.0,
-                        "dash": "dashdot",
+                        "dash": "solid",
                         "shape": "linear"
                 },
                 "type": "scatter",
