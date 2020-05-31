@@ -31,7 +31,6 @@ example for further explanations).
 
 """
 
-import sys
 #from __future__ import division, print_function
 import nibabel as nib
 import numpy as np
@@ -49,6 +48,7 @@ from dipy.reconst.dti import TensorModel
 from dipy.segment.mask import segment_from_cfa
 from dipy.segment.mask import bounding_box
 
+import os
 import sys
 import json
 
@@ -242,8 +242,6 @@ for i in range(0, len(directions)):
 	dirxs.append(direction[i] + str(directions[i]))
 
 
-
-
 #Get the X-most, Y-most, Z-most vectors
 axis_X = np.argmin(np.sum((gtab.bvecs-np.array([1, 0, 0]))**2, axis=-1))
 axis_Y = np.argmin(np.sum((gtab.bvecs-np.array([0, 1, 0]))**2, axis=-1))
@@ -264,12 +262,19 @@ for direction in ['b0', axis_X, axis_Y, axis_Z]:
 results = {
 	"SNR in b0, X, Y, Z": SNR_xyz,
 	"b0, X, Y, Z directions": directions_xyz,
-	"SNR data all directions": SNR_output1,
-	"direction vectors": directions1,
+	"SNR data in all directions": SNR_output1,
+	"direction vectors": directions1
+}
+
+os.mkdir("output")
+with open("output/snr.json", "w") as out_file:
+    json.dump(results, out_file)
+
+plotly = {
 	"brainlife": []
 }
 
-results['brainlife'].append({
+plotly['brainlife'].append({
 	"type": "plotly",
 	"layout": {
 		"yaxis": {
@@ -315,7 +320,7 @@ results['brainlife'].append({
 
 
 with open("product.json", "w") as out_file:
-    json.dump(results, out_file)
+    json.dump(plotly, out_file)
 
 
 """
