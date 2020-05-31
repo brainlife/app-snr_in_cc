@@ -35,15 +35,17 @@ import sys
 #from __future__ import division, print_function
 import nibabel as nib
 import numpy as np
-import matplotlib.pyplot as plt
+import nibabel as nib
+import sys
+import os
+import json
 from scipy.ndimage.morphology import binary_dilation
 
-#from dipy.data import fetch_stanford_hardi, read_stanford_hardi
 from dipy.io import read_bvals_bvecs
 from dipy.core.gradients import gradient_table
 from dipy.segment.mask import median_otsu
 from dipy.reconst.dti import TensorModel
-
+        
 from dipy.segment.mask import segment_from_cfa
 from dipy.segment.mask import bounding_box
 
@@ -231,8 +233,6 @@ directions.append("inf inf inf")
 for j in range(0, len(bvecs_sorted)):
 	for i in range(0, len(bvecs_sorted[j])):
 		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
-		#if isinstance(SNR, np.float64) or isinstance(SNR, np.float32):
-		#	SNR = float(SNR)
 		SNR_output.append(str(SNR))
 		SNR_output1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(SNR))
 		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
