@@ -31,7 +31,6 @@ example for further explanations).
 
 """
 
-import sys
 #from __future__ import division, print_function
 import nibabel as nib
 import numpy as np
@@ -47,6 +46,7 @@ from dipy.reconst.dti import TensorModel
 from dipy.segment.mask import segment_from_cfa
 from dipy.segment.mask import bounding_box
 
+import os
 import sys
 import json
 
@@ -231,8 +231,6 @@ directions.append("inf inf inf")
 for j in range(0, len(bvecs_sorted)):
 	for i in range(0, len(bvecs_sorted[j])):
 		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
-		#if isinstance(SNR, np.float64) or isinstance(SNR, np.float32):
-		#	SNR = float(SNR)
 		SNR_output.append(str(SNR))
 		SNR_output1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(SNR))
 		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
@@ -240,8 +238,6 @@ for j in range(0, len(bvecs_sorted)):
 dirxs = []
 for i in range(0, len(directions)):
 	dirxs.append(direction[i] + str(directions[i]))
-
-
 
 
 #Get the X-most, Y-most, Z-most vectors
@@ -264,12 +260,19 @@ for direction in ['b0', axis_X, axis_Y, axis_Z]:
 results = {
 	"SNR in b0, X, Y, Z": SNR_xyz,
 	"b0, X, Y, Z directions": directions_xyz,
-	"SNR data all directions": SNR_output1,
-	"direction vectors": directions1,
+	"SNR data in all directions": SNR_output1,
+	"direction vectors": directions1
+}
+
+os.mkdir("output")
+with open("output/snr.json", "w") as out_file:
+    json.dump(results, out_file)
+
+plotly = {
 	"brainlife": []
 }
 
-results['brainlife'].append({
+plotly['brainlife'].append({
 	"type": "plotly",
 	"layout": {
 		"yaxis": {
@@ -315,7 +318,7 @@ results['brainlife'].append({
 
 
 with open("product.json", "w") as out_file:
-    json.dump(results, out_file)
+    json.dump(plotly, out_file)
 
 
 """
