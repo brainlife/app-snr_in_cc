@@ -1,5 +1,3 @@
 {
-	"dwi": "/Users/davidhunt/Documents/5bb3f635cb555c003fa214c0/dwi.nii.gz",
-	"bvals": "/Users/davidhunt/Documents/5bb3f635cb555c003fa214c0/dwi.bvals",
-	"bvecs": "/Users/davidhunt/Documents/5bb3f635cb555c003fa214c0/dwi.bvecs"
+	"dwi_dir": "/Users/davidhunt/Documents/5bb3f635cb555c003fa214c0/"
 }

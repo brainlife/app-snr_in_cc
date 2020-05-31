@@ -34,15 +34,17 @@ example for further explanations).
 #from __future__ import division, print_function
 import nibabel as nib
 import numpy as np
-import matplotlib.pyplot as plt
+import nibabel as nib
+import sys
+import os
+import json
 from scipy.ndimage.morphology import binary_dilation
 
-#from dipy.data import fetch_stanford_hardi, read_stanford_hardi
 from dipy.io import read_bvals_bvecs
 from dipy.core.gradients import gradient_table
 from dipy.segment.mask import median_otsu
 from dipy.reconst.dti import TensorModel
-
+        
 from dipy.segment.mask import segment_from_cfa
 from dipy.segment.mask import bounding_box
 
