@@ -121,8 +121,8 @@ mask_noise = ~mask_noise
 mask_noise_img = nib.Nifti1Image(mask_noise.astype(np.uint8), affine)
 nib.save(mask_noise_img, 'mask_noise.nii.gz')
 
-noise_std = np.std(data[mask_noise, :])
-print('Noise standard deviation sigma= ', noise_std)
+noise_std = np.std(data[mask_noise, :])/np.sqrt(np.count_nonzero(mask_noise)) # use standard error
+print('Noise standard error sigma= ', noise_std)
 
 """We can now compute the SNR for each DWI. For example, report SNR
 for DW images with gradient direction that lies the closest to
