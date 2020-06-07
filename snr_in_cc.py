@@ -48,21 +48,12 @@ from dipy.reconst.dti import TensorModel
 from dipy.segment.mask import segment_from_cfa
 from dipy.segment.mask import bounding_box
 
-import os
-import sys
-import json
-
 ## load data
 #fetch_stanford_hardi()
 #img, gtab = read_stanford_hardi()
 
 img = nib.load(sys.argv[1])
 bvals, bvecs = read_bvals_bvecs(sys.argv[2], sys.argv[3])
-
-# make sure any b0 image bvecs are unit rather than zero
-#for i in range(0, len(bvals)):
-#  if bvecs[i,0] == 0.0 and bvecs[i,1] == 0.0 and bvecs[i,2] == 0.0:
-#    bvecs[i,0] = bvecs[i,1] = bvecs[i,2] = 0.577350
 
 gtab = gradient_table(bvals, bvecs)
 
@@ -110,20 +101,6 @@ cfa_img = nib.Nifti1Image((cfa*255).astype(np.uint8), affine)
 mask_cc_part_img = nib.Nifti1Image(mask_cc_part.astype(np.uint8), affine)
 nib.save(mask_cc_part_img, 'cc.nii.gz')
 
-#region = 40
-# fig = plt.figure('Corpus callosum segmentation')
-# plt.subplot(1, 2, 1)
-# plt.title("Corpus callosum (CC)")
-# plt.axis('off')
-# red = cfa[..., 0]
-# plt.imshow(np.rot90(red[region, ...]))
-
-# plt.subplot(1, 2, 2)
-# plt.title("CC mask used for SNR computation")
-# plt.axis('off')
-# plt.imshow(np.rot90(mask_cc_part[region, ...]))
-#fig.savefig("CC_segmentation.png", bbox_inches='tight')
-
 """Now that we are happy with our crude CC mask that selected voxels in the x-direction,
 we can use all the voxels to estimate the mean signal in this region.
 
@@ -156,9 +133,7 @@ the X, Y and Z axes.
 idx = np.sum(gtab.bvecs, axis=-1) == 0
 gtab.bvecs[idx] = np.inf
 
-
 # Sort the bvecs by their closeness to the X-axis, followed by Y and Z
-
 dist_x, dist_y, dist_z = [], [], []
 
 for i in range(0, len(gtab.bvecs)):
