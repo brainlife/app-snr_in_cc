@@ -57,11 +57,11 @@ bl dataset download 5bfee5acc203920043d43ddd && mv 5bfee5acc203920043d43ddd inpu
 
 ## Output
 
-All output files will be generated under the current working directory (pwd). The main outputs of this App are the subject's corpus callosum Nifti image called `cc.nii.gz` and the subject's brain mask Nifti image called `mask_noise.nii.gz`.
+All output files will be generated under the current working directory (pwd). The main outputs of this App are the subject's corpus callosum mask `cc.nii.gz` and the subject's brain mask Nifti image called `mask_noise.nii.gz`, as well as a bar graph of the SNR in each direction.
 
-#### Product.json
+#### SNR.json
 
-This app will also produce a file called `product.json` that contains all the SNR data in each b-vec direction, as well as the SNR data in the X-most, Y-most, and Z-most directions. This file allows web interfaces, DB and API calls on the results of the processing.
+This app will also produce a file called `SNR.json` in `output` directory that contains all the SNR data in the X-most, Y-most, and Z-most directions ("SNR in b0, X, Y, Z) as well as in each b-vec direction ("SNR in all directions"). The unit vectors that correspond to the direction #s are found in "direction vectors".
 
 ### Dependencies
 
