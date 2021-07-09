@@ -31,24 +31,22 @@ example for further explanations).
 
 """
 
-import sys
 #from __future__ import division, print_function
 import nibabel as nib
 import numpy as np
-import matplotlib.pyplot as plt
+import nibabel as nib
+import sys
+import os
+import json
 from scipy.ndimage.morphology import binary_dilation
 
-#from dipy.data import fetch_stanford_hardi, read_stanford_hardi
 from dipy.io import read_bvals_bvecs
 from dipy.core.gradients import gradient_table
 from dipy.segment.mask import median_otsu
 from dipy.reconst.dti import TensorModel
-
+        
 from dipy.segment.mask import segment_from_cfa
 from dipy.segment.mask import bounding_box
-
-import sys
-import json
 
 ## load data
 #fetch_stanford_hardi()
@@ -56,11 +54,6 @@ import json
 
 img = nib.load(sys.argv[1])
 bvals, bvecs = read_bvals_bvecs(sys.argv[2], sys.argv[3])
-
-# make sure any b0 image bvecs are unit rather than zero
-for i in range(0, len(bvals)):
-  if bvecs[i,0] == 0.0 and bvecs[i,1] == 0.0 and bvecs[i,2] == 0.0:
-    bvecs[i,0] = bvecs[i,1] = bvecs[i,2] = 0.577350
 
 gtab = gradient_table(bvals, bvecs)
 
@@ -108,20 +101,6 @@ cfa_img = nib.Nifti1Image((cfa*255).astype(np.uint8), affine)
 mask_cc_part_img = nib.Nifti1Image(mask_cc_part.astype(np.uint8), affine)
 nib.save(mask_cc_part_img, 'cc.nii.gz')
 
-#region = 40
-# fig = plt.figure('Corpus callosum segmentation')
-# plt.subplot(1, 2, 1)
-# plt.title("Corpus callosum (CC)")
-# plt.axis('off')
-# red = cfa[..., 0]
-# plt.imshow(np.rot90(red[region, ...]))
-
-# plt.subplot(1, 2, 2)
-# plt.title("CC mask used for SNR computation")
-# plt.axis('off')
-# plt.imshow(np.rot90(mask_cc_part[region, ...]))
-#fig.savefig("CC_segmentation.png", bbox_inches='tight')
-
 """Now that we are happy with our crude CC mask that selected voxels in the x-direction,
 we can use all the voxels to estimate the mean signal in this region.
 
@@ -154,9 +133,7 @@ the X, Y and Z axes.
 idx = np.sum(gtab.bvecs, axis=-1) == 0
 gtab.bvecs[idx] = np.inf
 
-
 # Sort the bvecs by their closeness to the X-axis, followed by Y and Z
-
 dist_x, dist_y, dist_z = [], [], []
 
 for i in range(0, len(gtab.bvecs)):
@@ -231,8 +208,6 @@ directions.append("inf inf inf")
 for j in range(0, len(bvecs_sorted)):
 	for i in range(0, len(bvecs_sorted[j])):
 		SNR = mean_signal[bvecs_sorted[j][i][0]]/noise_std
-		#if isinstance(SNR, np.float64) or isinstance(SNR, np.float32):
-		#	SNR = float(SNR)
 		SNR_output.append(str(SNR))
 		SNR_output1.append(str(bvecs_sorted[j][i][0]) + ', ' + str(SNR))
 		directions.append(gtab.bvecs[bvecs_sorted[j][i][0]])
@@ -240,8 +215,6 @@ for j in range(0, len(bvecs_sorted)):
 dirxs = []
 for i in range(0, len(directions)):
 	dirxs.append(direction[i] + str(directions[i]))
-
-
 
 
 #Get the X-most, Y-most, Z-most vectors
@@ -264,12 +237,19 @@ for direction in ['b0', axis_X, axis_Y, axis_Z]:
 results = {
 	"SNR in b0, X, Y, Z": SNR_xyz,
 	"b0, X, Y, Z directions": directions_xyz,
-	"SNR data all directions": SNR_output1,
-	"direction vectors": directions1,
+	"SNR data in all directions": SNR_output1,
+	"direction vectors": directions1
+}
+
+os.mkdir("output")
+with open("output/snr.json", "w") as out_file:
+    json.dump(results, out_file)
+
+plotly = {
 	"brainlife": []
 }
 
-results['brainlife'].append({
+plotly['brainlife'].append({
 	"type": "plotly",
 	"layout": {
 		"yaxis": {
@@ -315,7 +295,7 @@ results['brainlife'].append({
 
 
 with open("product.json", "w") as out_file:
-    json.dump(results, out_file)
+    json.dump(plotly, out_file)
 
 
 """
