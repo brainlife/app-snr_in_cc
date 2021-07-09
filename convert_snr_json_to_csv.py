@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 
+import os,sys
 import json
 import pandas as pd
 import numpy as np
 
 # load snr.json
-with open('output/snr.json','r') as snr_f:
+with open('product.json','r') as snr_f:
 	snr_data = json.load(snr_f)
 
 # set up output dataframe
@@ -13,12 +14,12 @@ out_data = pd.DataFrame(columns={'snr','volumes','dir_x','dir_y','dir_z'})
 
 # grab snr data in all directions
 snr = []
-snr = [ float(f.split(', ')[1]) for f in snr_data['SNR data in all directions'] ]
+snr = [ float(f.split(', ')[1]) for f in snr_data['SNR data all directions'] ]
 snr = snr + [ float(f) for f in snr_data['SNR in b0, X, Y, Z'][1:]]
 
 # grab volumes data
 volumes = []
-volumes = [ f.split(', ')[0] for f in snr_data['SNR data in all directions'] ]
+volumes = [ f.split(', ')[0] for f in snr_data['SNR data all directions'] ]
 volumes = volumes + ['b0_X','b0_Y','b0_Z']
 
 # grab the dir_x,y,z data
@@ -43,6 +44,9 @@ out_data['volumes'] = volumes
 out_data['dir_x'] = dir_x
 out_data['dir_y'] = dir_y
 out_data['dir_z'] = dir_z
+
+# reorder columns
+out_data = out_data[['volumes','dir_x','dir_y','dir_z','snr']]
 
 # save data
 if ~os.path.isdir('./snr-stats'):
