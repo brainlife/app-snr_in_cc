@@ -14,12 +14,12 @@ out_data = pd.DataFrame(columns={'snr','volumes','dir_x','dir_y','dir_z'})
 
 # grab snr data in all directions
 snr = []
-snr = [ float(f.split(', ')[1]) for f in snr_data['SNR data all directions'] ]
+snr = [ float(f.split(', ')[1]) for f in snr_data['SNR data in all directions'] ]
 snr = snr + [ float(f) for f in snr_data['SNR in b0, X, Y, Z'][1:]]
 
 # grab volumes data
 volumes = []
-volumes = [ f.split(', ')[0] for f in snr_data['SNR data all directions'] ]
+volumes = [ f.split(', ')[0] for f in snr_data['SNR data in all directions'] ]
 volumes = volumes + ['b0_X','b0_Y','b0_Z']
 
 # grab the dir_x,y,z data
