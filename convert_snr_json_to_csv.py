@@ -6,7 +6,7 @@ import pandas as pd
 import numpy as np
 
 # load snr.json
-with open('product.json','r') as snr_f:
+with open('./output/snr.json','r') as snr_f:
 	snr_data = json.load(snr_f)
 
 # set up output dataframe
