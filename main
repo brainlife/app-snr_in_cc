@@ -4,12 +4,14 @@
 #PBS -l walltime=00:20:00,vmem=32gb
 
 #parse config.json for input parameters
-out1=$(jq -r .dwi config.json)
-out2=$(jq -r .bvals config.json)
-out3=$(jq -r .bvecs config.json)
+img=$(jq -r .dwi config.json)
+bvals=$(jq -r .bvals config.json)
+bvecs=$(jq -r .bvecs config.json)
 
-singularity exec -e docker://brainlife/dipy:0.16.0 ./snr_in_cc.py "$out1" "$out2" "$out3"
-#./snr_in_cc.py "$out1" "$out2" "$out3"
+#singularity exec -e docker://brainlife/dipy:0.16.0 ./snr_in_cc.py "$img" "$bvals" "$bvecs"
+singularity exec -e docker://brainlife/dipy:1.4.0 ./snr_in_cc.py "$img" "$bvals" "$bvecs"
+
+singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./convert_snr_json_to_csv.py
 
 mkdir cc_mask && mkdir noise_mask
 mv cc.nii.gz cc_mask/mask.nii.gz && mv mask_noise.nii.gz noise_mask/mask.nii.gz
