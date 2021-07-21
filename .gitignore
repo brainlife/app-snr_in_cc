@@ -2,3 +2,7 @@ config.json
 *.nii.gz
 product.json
 plotlyex.json
+noise_mask
+cc_mask
+output
+snr-stats

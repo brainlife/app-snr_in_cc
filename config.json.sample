@@ -1,3 +1,5 @@
 {
-	"dwi_dir": "/Users/davidhunt/Documents/5bb3f635cb555c003fa214c0/"
+  "dwi": "input/dwi.nii.gz",
+  "bvals": "input/dwi.bvals",
+  "bvecs": "input/dwi.bvecs"
 }
