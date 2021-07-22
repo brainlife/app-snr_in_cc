@@ -61,7 +61,10 @@ data = img.get_data()
 affine = img.affine
 
 print('Computing brain mask...')
-b0_mask, mask = median_otsu(data, vol_idx=(0,)) # just take first volume as b0
+vol_idx = np.where(bvals==0)[0]
+vol_idx = np.ndarray.tolist(vol_idx)
+#b0_mask, mask = median_otsu(data, vol_idx=(0,)) # just take first volume as b0
+b0_mask, mask = median_otsu(data, vol_idx=vol_idx) # just take first volume as b0
 
 print('Computing tensors...')
 tenmodel = TensorModel(gtab)
