@@ -61,10 +61,10 @@ data = img.get_data()
 affine = img.affine
 
 print('Computing brain mask...')
-vol_idx = np.where(bvals==0)[0]
+vol_idx = np.where(bvals==0)[0] # avg all b0s to extract mask
 vol_idx = np.ndarray.tolist(vol_idx)
 #b0_mask, mask = median_otsu(data, vol_idx=(0,)) # just take first volume as b0
-b0_mask, mask = median_otsu(data, vol_idx=vol_idx) # just take first volume as b0
+b0_mask, mask = median_otsu(data, vol_idx=vol_idx)
 
 print('Computing tensors...')
 tenmodel = TensorModel(gtab)
@@ -127,7 +127,7 @@ nib.save(mask_noise_img, 'mask_noise.nii.gz')
 noise_std = np.std(data[mask_noise, :])
 print('Noise standard deviation sigma= ', noise_std)
 
-"""We can now compute the SNR for each DWI. For example, report SNR
+"""We can now compute the SNR for each gradient direction. For example, report SNR
 for DW images with gradient direction that lies the closest to
 the X, Y and Z axes.
 """

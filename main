@@ -1,14 +1,13 @@
 #!/bin/bash
 
 #PBS -l nodes=1:ppn=1
-#PBS -l walltime=00:20:00,vmem=32gb
+#PBS -l walltime=00:20:00,vmem=64gb
 
 #parse config.json for input parameters
 img=$(jq -r .dwi config.json)
 bvals=$(jq -r .bvals config.json)
 bvecs=$(jq -r .bvecs config.json)
 
-#singularity exec -e docker://brainlife/dipy:0.16.0 ./snr_in_cc.py "$img" "$bvals" "$bvecs"
 singularity exec -e docker://brainlife/dipy:1.4.0 ./snr_in_cc.py "$img" "$bvals" "$bvecs"
 
 singularity exec -e docker://brainlife/freesurfer-stats:1.2 ./convert_snr_json_to_csv.py
