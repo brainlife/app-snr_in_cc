@@ -2,6 +2,30 @@
 [![Run on Brainlife.io](https://img.shields.io/badge/Brainlife-brainlife.app.120-blue.svg)](https://doi.org/10.25663/brainlife.app.120)
 
 # app-snr_in_cc
+
+<!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
+
+**Computes the signal-to-noise ratio of DWI in the corpus callosum for the b0 and each gradient direction with DIPY, and outputs SNR statistics and the corpus callosum and noise masks.**
+
+Fits a tensor, segments the corpus callosum from the colour-FA map within a central bounding box (DIPY segment_from_cfa), estimates noise from a background mask (median_otsu) and reports SNR for b0 and for each gradient direction, including the directions closest to x, y and z. Use it as a QC measure of DWI data quality. Follows the DIPY snr_in_cc example.
+
+Run it on brainlife.io: [https://doi.org/10.25663/brainlife.app.120](https://doi.org/10.25663/brainlife.app.120)
+
+| Input | Datatype | Required | Description |
+|---|---|---|---|
+| `dwi` | `neuro/dwi` | yes | Diffusion-weighted image with bvals and bvecs. |
+
+| Output | Datatype | Description |
+|---|---|---|
+| `output` | `raw` | Raw SNR results (JSON/CSV) and intermediate files. |
+| `cc_mask` | `neuro/mask` | Corpus callosum mask in DWI space used to measure signal. |
+| `noise_mask` | `neuro/mask` | Background noise mask in DWI space used to estimate noise. |
+| `snr-stats` | `neuro/snr-stats` | SNR statistics for b0 and each gradient direction. |
+
+Runtime: container `brainlife/dipy:0.16.0`; 8 CPUs.
+
+<!-- brainlife-app:end -->
+
 Brainlife.io app that computes the signal-to-noise ratio in the corpus callosum in all b-vec directions.
 
 This app receives DWI datatype as input and outputs the signal-to-noise ratio in the corpus callosum in each b-vec direction (and b0) as well as the SNR in the X-most, Y-most, and Z-most directions.  Since the tracts of the corpus callosum run primarily left-to-right/right-to-left, the X-most directions should generally see lower SNRs than the Y- and Z-most directions.
