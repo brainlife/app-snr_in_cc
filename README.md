@@ -12,7 +12,7 @@
   <img src="https://img.shields.io/badge/license-MIT-lightgrey" alt="MIT license">
 </p>
 
-## 🧠 At a glance
+## At a glance
 
 <!-- brainlife-app:begin (generated from the App manifest; edit the manifest, not this block) -->
 
@@ -22,19 +22,19 @@ Fits a tensor, segments the corpus callosum from the colour-FA map within a cent
 
 | | |
 |---|---|
-| 📥 **Inputs** | `neuro/dwi` |
-| 📤 **Outputs** | `raw` · `neuro/mask` ×2 · `neuro/snr-stats` |
-| 🐳 **Container** | `brainlife/dipy:0.16.0` |
-| ⚙️ **Resources** | 8 CPUs |
-| 🔗 **Run it** | [doi.org/10.25663/brainlife.app.120](https://doi.org/10.25663/brainlife.app.120) |
+| **Inputs** | `neuro/dwi` |
+| **Outputs** | `raw` · `neuro/mask` ×2 · `neuro/snr-stats` |
+| **Container** | `brainlife/dipy:0.16.0` |
+| **Resources** | 8 CPUs |
+| **Run it** | [doi.org/10.25663/brainlife.app.120](https://doi.org/10.25663/brainlife.app.120) |
 
-#### 📥 Inputs
+#### Inputs
 
 | Input | Datatype | Required | Description |
 |---|---|---|---|
 | `dwi` | `neuro/dwi` | yes | Diffusion-weighted image with bvals and bvecs. |
 
-#### 📤 Outputs
+#### Outputs
 
 | Output | Datatype | Description |
 |---|---|---|
@@ -45,7 +45,7 @@ Fits a tensor, segments the corpus callosum from the colour-FA map within a cent
 
 <!-- brainlife-app:end -->
 
-## 🔬 How it works
+## How it works
 
 The App follows the DIPY [SNR in the corpus callosum](https://dipy.org/documentation/1.1.0./examples_built/snr_in_cc/) example:
 
@@ -55,13 +55,13 @@ The App follows the DIPY [SNR in the corpus callosum](https://dipy.org/documenta
 
 Diffusion is freer along white matter fibres, so the diffusion-weighted signal is attenuated most in the direction the fibres run. The fibres of the corpus callosum run mainly left-right, so the x-most directions should generally show a lower SNR than the y- and z-most directions. Use the App as a quality-control measure of DWI data.
 
-## 🚀 Running the App
+## Running the App
 
-### ☁️ On brainlife.io
+### On brainlife.io
 
 Open the App at [doi.org/10.25663/brainlife.app.120](https://doi.org/10.25663/brainlife.app.120), choose a `neuro/dwi` dataset from your project and press **Execute**. The App writes the SNR statistics (`neuro/snr-stats`), the corpus callosum and noise masks (`neuro/mask`, tagged `CC` and `noise`) and the raw results (`raw`, tagged `snr-cc`), and shows a bar graph of the SNR in each direction.
 
-### 💻 Locally
+### Locally
 
 You need [Singularity/Apptainer](https://apptainer.org/) and [`jq`](https://jqlang.github.io/jq/). `main` runs the SNR computation in the `brainlife/dipy:0.16.0` container and the csv conversion in `brainlife/freesurfer-stats:1.2`.
 
@@ -82,7 +82,7 @@ You need [Singularity/Apptainer](https://apptainer.org/) and [`jq`](https://jqla
    ./main
    ```
 
-### 🧪 Sample data
+### Sample data
 
 Download a sample DWI from brainlife.io with the [brainlife CLI](https://github.com/brainlife/cli):
 
@@ -93,7 +93,7 @@ mkdir input
 bl dataset download 5bfee5acc203920043d43ddd && mv 5bfee5acc203920043d43ddd input/dwi
 ```
 
-## 📦 Outputs
+## Outputs
 
 All output files are written under the current working directory:
 
@@ -110,7 +110,7 @@ noise_mask/
 product.json            bar graph of the SNR in each direction, shown on brainlife.io
 ```
 
-## 📚 Citing
+## Citing
 
 > [!TIP]
 > If you use this App in your work, please cite the App, the software it builds on and brainlife.io (below). GitHub's **Cite this repository** button gives the App citation in APA and BibTeX.
@@ -122,13 +122,13 @@ product.json            bar graph of the SNR in each direction, shown on brainli
 - Hayashi S, Caron BA, Heinsfeld AS, et al. brainlife.io: a decentralized and open-source cloud platform to support neuroscience research. *Nature Methods* 21:809–813 (2024). [doi:10.1038/s41592-024-02237-2](https://doi.org/10.1038/s41592-024-02237-2)
 - Avesani P, McPherson B, Hayashi S, et al. The open diffusion data derivatives, brain data upcycling via integrated publishing of derivatives and reproducible open cloud services. *Scientific Data* 6:69 (2019). [doi:10.1038/s41597-019-0073-y](https://doi.org/10.1038/s41597-019-0073-y)
 
-## 👥 Authors
+## Authors
 
 - Franco Pestilli (project director)
 - David Hunt
 - Soichi Hayashi
 
-## 💰 Funding
+## Funding
 
 [![Wellcome-226486/Z/22/Z](https://img.shields.io/badge/Wellcome-226486%2FZ%2F22%2FZ-purple.svg)](https://wellcome.org/)
 [![NIH-NINDS-U24NS140384](https://img.shields.io/badge/NIH_NINDS-U24NS140384-green.svg)](https://reporter.nih.gov/project-details/11261037)
@@ -147,6 +147,6 @@ product.json            bar graph of the SNR in each direction, shown on brainli
 
 <sub>brainlife.io is publicly funded, and acknowledging that support helps keep it running. This App was developed with support from Wellcome, the U.S. National Institutes of Health (including the BRAIN Initiative BRAIN CONNECTS program: The Axonal Projectome EXchange, U24NS140384, and the Center for Mesoscale Connectomics, UM1NS132207) and the U.S. National Science Foundation.</sub>
 
-## ⚖️ License
+## License
 
 MIT, Copyright (c) 2020 brainlife.io, The University of Texas at Austin and Indiana University. DIPY is distributed under its own license.
